@@ -1,26 +1,23 @@
 package com.yahoo.pil.activities;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 import com.yahoo.pil.R;
+import com.yahoo.pil.adapters.DetailsImagesListAdapter;
+import com.yahoo.pil.models.DetailsScrollImage;
 import com.yahoo.pil.models.ImageResult;
-import com.yahoo.pil.views.TouchImageView;
 
-import java.util.Locale;
+import org.lucasr.twowayview.TwoWayView;
+import java.util.ArrayList;
 
 
 public class ImageDisplayActivity extends ActionBarActivity {
@@ -40,6 +37,28 @@ public class ImageDisplayActivity extends ActionBarActivity {
         ImageView topImageView = (ImageView) findViewById(R.id.ivProfileBackgroundImage);
         final String fullImageUrl = imageResult.getFullUrl();
         Picasso.with(this).load(fullImageUrl).into(topImageView);
+
+        // make a list of ImageToLoad objects
+        ArrayList<DetailsScrollImage> images = new ArrayList<DetailsScrollImage>();
+        
+        DetailsImagesListAdapter imagesAdapter = new DetailsImagesListAdapter(this, images);
+        for (int i=0; i<20; i++) {
+            DetailsScrollImage nextImage = new DetailsScrollImage(fullImageUrl);
+            images.add(nextImage); // substitute some pretty picture you can stand to see 20 times in a list
+        }
+        
+        TwoWayView lvScrollView = (TwoWayView) findViewById(R.id.lvItems);
+        lvScrollView.setAdapter(imagesAdapter);
+        imagesAdapter.notifyDataSetChanged();
+
+       /* ArrayList<String> items = new ArrayList<String>();
+        for (int i=0; i<20; i++) {
+            items.add(fullImageUrl);
+            //items.add("Item "+i+" ");
+        }
+        ArrayAdapter<String> aItems = new ArrayAdapter<String>(this, R.layout.item_details_image_small, items);
+        TwoWayView lvTest = (TwoWayView) findViewById(R.id.lvItems);
+        lvTest.setAdapter(aItems);*/
     }
 
     public void favoriteClicked(View v) {
