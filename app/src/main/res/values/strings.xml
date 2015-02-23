@@ -44,5 +44,8 @@
         <item>clipart</item>
         <item>lineart</item>
     </string-array>
+    <string name="title_activity_setting">Preference</string>
+
+    <string name="hello_world">Hello world!</string>
 
 </resources>

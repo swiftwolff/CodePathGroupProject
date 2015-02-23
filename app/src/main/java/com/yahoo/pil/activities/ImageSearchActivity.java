@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Toast;
 
 import com.etsy.android.grid.StaggeredGridView;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -117,7 +118,10 @@ public class ImageSearchActivity extends ActionBarActivity implements ImageSearc
         int id = item.getItemId();
 
         if (id == R.id.searchSetting) {
-            displaySettingsDialog();
+//            displaySettingsDialog();
+            Toast.makeText(this,"Clicked Setting!",Toast.LENGTH_LONG).show();
+            Intent i = new Intent(this, SettingActivity.class);
+            startActivity(i);
         }
 
         return super.onOptionsItemSelected(item);
