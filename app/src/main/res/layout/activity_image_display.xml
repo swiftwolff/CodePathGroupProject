@@ -1,11 +1,217 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools" 
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     tools:context="com.yahoo.pil.activities.ImageDisplayActivity">
+    
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:nestedScrollingEnabled="true"
+    android:orientation="vertical"
+    android:fillViewport="true"> <!--IMPORTANT otherwise backgrnd img. will not fill the whole screen -->
 
-    <ImageView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/rlUserHeader"
+        android:background="#ff8f9098">
+
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="150dp"
+            android:id="@+id/ivProfileBackgroundImage"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:contentDescription="background image"
+            android:layout_alignParentRight="true"
+            android:scaleType="centerCrop"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginTop="0dp" />
+
+        <ImageView
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:id="@+id/ivFavoriteImage"
+            android:contentDescription="favorite image"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/ic_favorite"
+            android:onClick="favoriteClicked" />
+
+        <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="30dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignBottom="@+id/ivProfileBackgroundImage"
+            android:background="#7d000000">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Location Name"
+                android:id="@+id/tvLocationName"
+                android:layout_marginStart="59dp"
+                android:layout_marginLeft="59dp"
+                android:layout_margin="5dp"
+                android:textStyle="bold"
+                android:textColor="#ffffffff" />
+            
+            </FrameLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="100dp"
+        android:layout_below="@+id/rlUserHeader"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/llMoreImagesContainer">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="More Images:"
+            android:id="@+id/tvMoreImages"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp" />
+
+        <org.lucasr.twowayview.TwoWayView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/lvItems"
+            style="@style/TwoWayView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:drawSelectorOnTop="false"
+            tools:context=".MainActivity"
+            android:layout_alignParentEnd="false"
+            android:layout_below="@+id/tvMoreImages"
+            android:orientation="horizontal"/>
+        
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/rlDetailsContainer"
+        android:layout_below="@+id/llMoreImagesContainer"
+        android:layout_above="@+id/ivAdsBannerImage"
+        android:nestedScrollingEnabled="true"
+        android:layoutMode="clipBounds">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/more_info_placeholder_string"
+            android:id="@+id/tvMoreDetails"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_margin="10dp" />
+
+        <TextView
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:text="Distance:"
+            android:id="@+id/tvDistanceLabel"
+            android:layout_below="@+id/tvMoreDetails"
+            android:layout_alignLeft="@+id/tvMoreDetails"
+            android:layout_alignStart="@+id/tvMoreDetails"
+            android:layout_marginTop="10dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/distance_unit"
+            android:id="@+id/tvDistanceValue"
+            android:layout_centerHorizontal="true"
+            android:layout_alignTop="@+id/tvDistanceLabel"
+            android:layout_toRightOf="@+id/tvDistanceLabel"
+            android:layout_alignBottom="@+id/tvDistanceLabel" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/navigateButtonName"
+            android:id="@+id/buttonNavigate"
+            android:layout_below="@+id/tvMoreDetails"
+            android:layout_alignRight="@+id/tvMoreDetails"
+            android:layout_alignEnd="@+id/tvMoreDetails"
+            android:onClick="navigateClicked" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/current_status_open"
+            android:id="@+id/tvOpenStatus"
+            android:layout_below="@+id/buttonNavigate"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_margin="10dp" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:id="@+id/imageButton"
+            android:layout_below="@+id/buttonNavigate"
+            android:layout_toRightOf="@+id/tvOpenStatus"
+            android:layout_toEndOf="@+id/tvOpenStatus"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/ic_phone"
+            android:contentDescription="Call Now"
+            android:layout_alignBottom="@+id/tvOpenStatus"
+            android:cropToPadding="false"
+            android:background="#ffffffff"
+            android:onClick="callClicked" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_fees_string"
+            android:id="@+id/tvFeesLabel"
+            android:layout_below="@+id/tvOpenStatus"
+            android:layout_alignLeft="@+id/tvOpenStatus"
+            android:layout_alignStart="@+id/tvOpenStatus" />
+    </RelativeLayout>
+
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:id="@+id/ivAdsBannerImage"
+            android:contentDescription="Ad image"
+            android:layout_alignParentRight="true"
+            android:scaleType="centerCrop"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginTop="0dp"
+            android:layout_alignParentBottom="true"
+            android:background="#00ffffff"
+            android:src="@drawable/ic_sample_ad"
+            android:cropToPadding="false"
+            android:layout_margin="10dp" />
+    <!--<com.yahoo.pil.views.TouchImageView
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
         android:id="@+id/ivImageResult"
         android:maxWidth="600dp"
         android:scaleType="fitXY"
@@ -15,5 +221,9 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-</RelativeLayout>
+        android:layout_alignParentEnd="true" />-->
+
+    </LinearLayout>
+ </ScrollView>
+    
+ </RelativeLayout>
