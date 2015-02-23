@@ -7,6 +7,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -23,6 +24,9 @@ import java.util.ArrayList;
 public class ImageDisplayActivity extends ActionBarActivity {
 
     Boolean isFavorite;
+    ImageView topImageView;
+    ArrayList<DetailsScrollImage> images;
+    DetailsImagesListAdapter imagesAdapter;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,17 +38,20 @@ public class ImageDisplayActivity extends ActionBarActivity {
         //getActionBar().hide();
         ImageResult imageResult = getIntent().getParcelableExtra("result");
        // final TouchImageView imageView = (TouchImageView)findViewById(R.id.ivImageResult);
-        ImageView topImageView = (ImageView) findViewById(R.id.ivProfileBackgroundImage);
+        topImageView = (ImageView) findViewById(R.id.ivProfileBackgroundImage);
         final String fullImageUrl = imageResult.getFullUrl();
         Picasso.with(this).load(fullImageUrl).into(topImageView);
 
         // make a list of ImageToLoad objects
-        ArrayList<DetailsScrollImage> images = new ArrayList<DetailsScrollImage>();
+        images = new ArrayList<DetailsScrollImage>();
+        //Adapter
+        imagesAdapter = new DetailsImagesListAdapter(this, images);
         
-        DetailsImagesListAdapter imagesAdapter = new DetailsImagesListAdapter(this, images);
-        for (int i=0; i<20; i++) {
+        for (int i=0; i<10; i++) {
             DetailsScrollImage nextImage = new DetailsScrollImage(fullImageUrl);
             images.add(nextImage); // substitute some pretty picture you can stand to see 20 times in a list
+            DetailsScrollImage nextImage2 = new DetailsScrollImage("http://a0.twimg.com/images/themes/theme1/bg.png");
+            images.add(nextImage2);
         }
         
         TwoWayView lvScrollView = (TwoWayView) findViewById(R.id.lvItems);
@@ -59,6 +66,14 @@ public class ImageDisplayActivity extends ActionBarActivity {
         ArrayAdapter<String> aItems = new ArrayAdapter<String>(this, R.layout.item_details_image_small, items);
         TwoWayView lvTest = (TwoWayView) findViewById(R.id.lvItems);
         lvTest.setAdapter(aItems);*/
+        lvScrollView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+              // Toast.makeText(ImageDisplayActivity.this, "Image clicked",Toast.LENGTH_SHORT).show();
+                DetailsScrollImage selectedImage = images.get(position);
+                Picasso.with(ImageDisplayActivity.this).load(selectedImage.urlString).into(topImageView);
+            }
+        });
     }
 
     public void favoriteClicked(View v) {
