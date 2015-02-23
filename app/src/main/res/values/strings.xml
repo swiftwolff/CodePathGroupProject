@@ -6,6 +6,12 @@
     <string name="hint_search">Enter Search Query</string>
     <string name="image_title_label">Image Title</string>
     <string name="title_activity_image_display">Full Image</string>
+    <string name="more_info_placeholder_string">Golden Gate Park is the third most visited park in the United States. While the park is free to visit during the day, popular attractions charge admission, such as deYoung Museum, California Academy of Sciences and Conservatory of Flowers. The park is filled with gardens, museums, art, flowers, trees, lakes, birds and wildlife. There are also plenty of opportunities to participate in sports, clubs and other activities.</string>
+    <string name="distance_unit">miles</string>
+    <string name="navigateButtonName">Navigate</string>
+    <string name="current_status_open">Currently Open</string>
+    <string name="current_status_closed">Currently Closed</string>
+    <string name="no_fees_string">No Fees</string>
 
     <string-array name="image_size_array">
         <item>any</item>
@@ -38,5 +44,8 @@
         <item>clipart</item>
         <item>lineart</item>
     </string-array>
+    <string name="title_activity_setting">Preference</string>
+
+    <string name="hello_world">Hello world!</string>
 
 </resources>
