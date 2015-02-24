@@ -1,5 +1,6 @@
 package com.yahoo.pil.models;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -9,43 +10,40 @@ import com.loopj.android.http.RequestParams;
  */
 
 public class ImageSearchApiClient {
-    private final static String API_BASE_URL = "https://ajax.googleapis.com/ajax/services/search/images";
+    private final static String API_BASE_URL = "https://api.flickr.com/services/rest";
     private static final AsyncHttpClient client = new AsyncHttpClient();
 
-    public static void searchImages(String searchQuery, int page, SearchSetting searchSetting, JsonHttpResponseHandler handler) {
-        //Google Image search API will only return a maximum of 64 images. (0-7 pages with 8 images each).
-        //So after page 7, reset the page number to 0 to start over, giving the illusion of infinite scroll.
-        if(page > 7) {
-            page = 0;
-        }
-        RequestParams requestParams = prepareRequestParams(searchQuery, page, searchSetting);
+    public static void searchImages(String searchCategory, double latitude, double longitude, SearchSetting searchSetting, JsonHttpResponseHandler handler) {
+
+        RequestParams requestParams = prepareBaseRequestParams();
+        requestParams.add("method", "flickr.photos.search");
+        requestParams.add("lat", "37.3711");
+        requestParams.add("lon", "-122.0375");
+        requestParams.add("radius", "10");
+        requestParams.add("radius_units", "Miles");
+        requestParams.add("per_page", "5");
+        requestParams.add("sort", "Interesting");
+
+        requestParams.add("group_id", searchCategory);
         client.get(API_BASE_URL, requestParams, handler);
     }
 
-    private static RequestParams prepareRequestParams(String searchQuery, int page, SearchSetting searchSetting) {
+    public static void getDifferentSizeImages(String photoId, JsonHttpResponseHandler handler) {
+
+        RequestParams requestParams = prepareBaseRequestParams();
+        requestParams.add("method", "flickr.photos.getSizes");
+        requestParams.add("photo_id", photoId);
+
+        client.get(API_BASE_URL, requestParams, handler);
+    }
+
+    private static RequestParams prepareBaseRequestParams() {
         RequestParams requestParams = new RequestParams();
-        requestParams.add("start", String.valueOf(page * 8));
-        requestParams.add("rsz", "8");
-        requestParams.add("v", "1.0");
-        requestParams.add("q", searchQuery);
 
-        String size = searchSetting.getSize();
-        String color = searchSetting.getColor();
-        String type = searchSetting.getType();
-        String site = searchSetting.getSite();
+        requestParams.add("api_key", "b186fce65e089ac4f6a1e71162d0f6f9");
+        requestParams.add("format", "json");
+        requestParams.add("nojsoncallback", "1");
 
-        if(size != null && size.isEmpty() == false && "any".equalsIgnoreCase(size) == false) {
-            requestParams.add("imgsz", size);
-        }
-        if(color != null && color.isEmpty() == false && "any".equalsIgnoreCase(color) == false) {
-            requestParams.add("imgcolor", color);
-        }
-        if(type != null && type.isEmpty() == false && "any".equalsIgnoreCase(type) == false) {
-            requestParams.add("imgtype", type);
-        }
-        if(site != null && site.isEmpty() == false) {
-            requestParams.add("as_sitesearch", site);
-        }
         return requestParams;
     }
 }

@@ -15,9 +15,10 @@ import com.squareup.picasso.Picasso;
 import com.yahoo.pil.R;
 import com.yahoo.pil.adapters.DetailsImagesListAdapter;
 import com.yahoo.pil.models.DetailsScrollImage;
-import com.yahoo.pil.models.ImageResult;
+import com.yahoo.pil.models.Photo;
 
 import org.lucasr.twowayview.TwoWayView;
+
 import java.util.ArrayList;
 
 
@@ -36,10 +37,10 @@ public class ImageDisplayActivity extends ActionBarActivity {
         updateFavoriteButtonImage();
         
         //getActionBar().hide();
-        ImageResult imageResult = getIntent().getParcelableExtra("result");
+        Photo imageResult = getIntent().getParcelableExtra("photo");
        // final TouchImageView imageView = (TouchImageView)findViewById(R.id.ivImageResult);
         topImageView = (ImageView) findViewById(R.id.ivProfileBackgroundImage);
-        final String fullImageUrl = imageResult.getFullUrl();
+        final String fullImageUrl = imageResult.getBigImageURL();
         Picasso.with(this).load(fullImageUrl).into(topImageView);
 
         // make a list of ImageToLoad objects
