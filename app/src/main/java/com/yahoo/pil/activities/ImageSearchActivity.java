@@ -119,7 +119,7 @@ public class ImageSearchActivity extends ActionBarActivity implements ImageSearc
 
         if (id == R.id.searchSetting) {
 //            displaySettingsDialog();
-            Toast.makeText(this,"Clicked Setting!",Toast.LENGTH_LONG).show();
+//            Toast.makeText(this,"Clicked Setting!",Toast.LENGTH_LONG).show();
             Intent i = new Intent(this, SettingActivity.class);
             startActivity(i);
         }

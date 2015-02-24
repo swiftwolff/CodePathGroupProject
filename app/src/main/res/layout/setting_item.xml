@@ -11,18 +11,18 @@
         android:scaleType="centerCrop"
         android:adjustViewBounds="true"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_marginBottom="5dp"/>
+        android:layout_height="95dp"
+        android:layout_marginBottom="6dp"/>
     <TextView
         android:id="@+id/setting_text"
-        android:layout_height="fill_parent"
-        android:layout_width="fill_parent"
+        android:layout_height="96dp"
+        android:layout_width="match_parent"
         android:textSize="10pt"
         android:fontFamily="sans-serif-light"
-        android:layout_marginTop="-16pt"
-        android:layout_marginLeft="15pt"
+        android:layout_marginTop="-46pt"
+        android:layout_marginLeft="0pt"
         android:gravity="left|center_vertical"
         android:textColor="#ffffff"
-        android:background="#4D000000"/>
+        android:background="#80000000"/>
 
 </LinearLayout>
