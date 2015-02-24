@@ -20,7 +20,6 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.yahoo.pil.R;
 import com.yahoo.pil.adapters.ImageResultsAdapter;
@@ -118,7 +117,10 @@ public class ImageSearchActivity extends ActionBarActivity implements ImageSearc
         int id = item.getItemId();
 
         if (id == R.id.searchSetting) {
-            displaySettingsDialog();
+            //displaySettingsDialog();
+            Toast.makeText(this,"Clicked Setting!",Toast.LENGTH_LONG).show();
+            Intent i = new Intent(this, SettingActivity.class);
+            startActivity(i);
         }
 
         return super.onOptionsItemSelected(item);
