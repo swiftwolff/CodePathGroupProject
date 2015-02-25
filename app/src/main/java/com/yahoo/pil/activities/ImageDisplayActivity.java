@@ -9,12 +9,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.yahoo.pil.R;
 import com.yahoo.pil.adapters.DetailsImagesListAdapter;
 import com.yahoo.pil.models.DetailsScrollImage;
+import com.yahoo.pil.models.ImageSearchApiClient;
 import com.yahoo.pil.models.Photo;
 
 import org.lucasr.twowayview.TwoWayView;
@@ -28,6 +30,7 @@ public class ImageDisplayActivity extends ActionBarActivity {
     ImageView topImageView;
     ArrayList<DetailsScrollImage> images;
     DetailsImagesListAdapter imagesAdapter;
+    ImageSearchApiClient detailsClient;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,18 +45,30 @@ public class ImageDisplayActivity extends ActionBarActivity {
         topImageView = (ImageView) findViewById(R.id.ivProfileBackgroundImage);
         final String fullImageUrl = imageResult.getBigImageURL();
         Picasso.with(this).load(fullImageUrl).into(topImageView);
+        TextView tvName = (TextView) findViewById(R.id.tvLocationName);
+        tvName.setText(imageResult.getTitle().toString());
 
         // make a list of ImageToLoad objects
         images = new ArrayList<DetailsScrollImage>();
         //Adapter
         imagesAdapter = new DetailsImagesListAdapter(this, images);
         
-        for (int i=0; i<10; i++) {
+        //for (int i=0; i<2; i++) {
             DetailsScrollImage nextImage = new DetailsScrollImage(fullImageUrl);
             images.add(nextImage); // substitute some pretty picture you can stand to see 20 times in a list
-            DetailsScrollImage nextImage2 = new DetailsScrollImage("http://a0.twimg.com/images/themes/theme1/bg.png");
-            images.add(nextImage2);
-        }
+            nextImage = new DetailsScrollImage("https://farm9.staticflickr.com/8263/8685477275_3e0e704743_b.jpg");
+            images.add(nextImage);
+            DetailsScrollImage image3 = new DetailsScrollImage("https://farm3.staticflickr.com/2801/4128710402_8a6d7e39a5_b.jpg");
+            images.add(image3);
+            nextImage = new DetailsScrollImage("https://farm8.staticflickr.com/7237/7343944286_fa525f1954_b.jpg");
+            images.add(nextImage);
+            nextImage = new DetailsScrollImage("https://farm3.staticflickr.com/2640/4128708874_cb33bc6dfc_b.jpg");
+            images.add(nextImage);
+            nextImage = new DetailsScrollImage("https://farm3.staticflickr.com/2801/4128710402_8a6d7e39a5_b.jpg");
+            images.add(nextImage);
+            nextImage = new DetailsScrollImage("https://farm8.staticflickr.com/7502/15923503632_d5bc50d341_b.jpg");
+            images.add(nextImage);
+       // }
         
         TwoWayView lvScrollView = (TwoWayView) findViewById(R.id.lvItems);
         lvScrollView.setAdapter(imagesAdapter);
