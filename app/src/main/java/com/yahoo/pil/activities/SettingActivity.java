@@ -1,18 +1,23 @@
 package com.yahoo.pil.activities;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -21,6 +26,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.yahoo.pil.R;
+import com.yahoo.pil.adapters.OptionAdapter;
+import com.yahoo.pil.models.Option;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,31 +41,39 @@ public class SettingActivity extends ActionBarActivity {
     int[] drawables = new int[] {R.drawable.mall, R.drawable.museum, R.drawable.park, R.drawable.restaurant, R.drawable.sightseeing};
     SharedPreferences pref;
     ListView lvSetting;
+    ArrayList<Option> optionsList;
+    ArrayAdapter<Option> optionAdapter;
     SimpleAdapter adapter;
+
+//    @Override
+//    public View onCreateView(String name, @NonNull Context context, @NonNull AttributeSet attrs) {
+//        View view = super.onCreateView(name, context, attrs);
+//        int i = lvSetting.getFirstVisiblePosition();
+//        int j = lvSetting.getLastVisiblePosition();
+//        int c = lvSetting.getChildCount();
+//        Log.d("DEBUG", "the first visible position is at " +i );
+//        Log.d("DEBUG", "the last visible position is at " +j );
+//        Log.d("DEBUG", "the count is " +c );
+//        return view;
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
 
-        List<HashMap<String,String>> aList = new ArrayList<HashMap<String,String>>();
-        for(int i=0;i<options.length;i++){
-            HashMap<String, String> hm = new HashMap<String,String>();
-            hm.put("option", options[i]);
-            hm.put("drawable", Integer.toString(drawables[i]) );
-            aList.add(hm);
+        optionsList = new ArrayList<Option>();
+        for(int i=0; i<options.length; i++) {
+            Option option = new Option();
+            option.setName(options[i]);
+            option.setDrawID(drawables[i]);
+            optionsList.add(option);
         }
-
-        String[] from = {"drawable","option"};
-        int[] to = {R.id.setting_image,R.id.setting_text};
-        adapter = new SimpleAdapter(getBaseContext(), aList, R.layout.setting_item, from, to);
-
         lvSetting = (ListView) findViewById(R.id.lvSetting);
-
-        lvSetting.setAdapter(adapter);
+        optionAdapter = new OptionAdapter(this, optionsList);
+        lvSetting.setAdapter(optionAdapter);
 
         pref = PreferenceManager.getDefaultSharedPreferences(this);
-        setPreferences();
 
         lvSetting.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
@@ -67,7 +82,7 @@ public class SettingActivity extends ActionBarActivity {
                 TextView tvName = (TextView) view.findViewById(R.id.setting_text);
 
                 if(pref.getString(tvName.getText().toString(),null)!=null && pref.getString(tvName.getText().toString(),null).equals("yes")) {
-                    Toast.makeText(getBaseContext(), "Unset this option", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getBaseContext(), "Unset this option", Toast.LENGTH_SHORT).show();
                     SharedPreferences.Editor edit = pref.edit();
                     edit.putString(tvName.getText().toString(),"no");
                     edit.commit();
@@ -79,7 +94,7 @@ public class SettingActivity extends ActionBarActivity {
                     mparams.setMargins(0,-302,0,0);
 
                     tvName.setLayoutParams(mparams);
-                    tvName.setBackgroundColor(Color.parseColor("#80000000"));
+                    tvName.setBackgroundColor(Color.parseColor("#B3000000"));
                     return;
                 }
                 tvName.getLayoutParams().height = -1;
@@ -92,7 +107,7 @@ public class SettingActivity extends ActionBarActivity {
                 SharedPreferences.Editor edit = pref.edit();
                 edit.putString(tvName.getText().toString(),"yes");
                 edit.commit();
-                Toast.makeText(getBaseContext(), "set this option", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getBaseContext(), "set this option", Toast.LENGTH_SHORT).show();
             }
         });
     }

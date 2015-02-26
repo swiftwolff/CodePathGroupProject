@@ -23,6 +23,6 @@
         android:layout_marginLeft="0pt"
         android:gravity="left|center_vertical"
         android:textColor="#ffffff"
-        android:background="#80000000"/>
+        android:background="#B3000000"/>
 
 </LinearLayout>
