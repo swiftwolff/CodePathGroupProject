@@ -1,10 +1,14 @@
 package com.yahoo.pil.activities;
 
+import android.content.Context;
 import android.content.Intent;
-import android.content.IntentSender;
+import android.content.SharedPreferences;
+import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -15,11 +19,6 @@ import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.etsy.android.grid.StaggeredGridView;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationServices;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.yahoo.pil.R;
 import com.yahoo.pil.adapters.ImageResultsAdapter;
@@ -34,26 +33,67 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
 public class ImageSearchActivity extends ActionBarActivity implements ImageSearchSetting.OnFragmentInteractionListener,
-        GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
 
     private StaggeredGridView sgvResults;
     private List<Photo> imageResults;
     private ImageResultsAdapter aImageResultsAdapter;
     private SearchSetting searchSettingParcelable;
-    private GoogleApiClient mGoogleApiClient;
-
-    private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
-
+    private LocationManager locationManager;
+    private String provider;
 
     private static final String[] SEARCH_CATEGORIES = new String[]{"626047@N23", "1938854@N23", "57634850@N00", "72717767@N00", "83029234@N00"};
     private double latitude;
     private double longitude;
+
+
+    /* Request updates at startup */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        locationManager.requestLocationUpdates(provider, 400, 1, this);
+        aImageResultsAdapter.clear();
+        loadImageGridView();
+    }
+
+    /* Remove the locationlistener updates when Activity is paused */
+    @Override
+    protected void onPause() {
+        super.onPause();
+        locationManager.removeUpdates(this);
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        int lat = (int) (location.getLatitude());
+        int lng = (int) (location.getLongitude());
+        Toast.makeText(this, String.valueOf(lat) + " " + String.valueOf(lng), Toast.LENGTH_LONG);
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+        Toast.makeText(this, "Enabled new provider " + provider,
+                Toast.LENGTH_SHORT).show();
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+        Toast.makeText(this, "Disabled provider " + provider,
+                Toast.LENGTH_SHORT).show();
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,14 +104,19 @@ public class ImageSearchActivity extends ActionBarActivity implements ImageSearc
         this.aImageResultsAdapter = new ImageResultsAdapter(this, imageResults);
         this.sgvResults.setAdapter(aImageResultsAdapter);
         this.searchSettingParcelable = new SearchSetting();
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(LocationServices.API)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this).build();
+        Criteria criteria = new Criteria();
+        provider = locationManager.getBestProvider(criteria, false);
+        Location location = locationManager.getLastKnownLocation(provider);
 
-        connectClient();
-
+        // Initialize the location fields
+        if (location != null) {
+            System.out.println("Provider " + provider + " has been selected.");
+            onLocationChanged(location);
+        } else {
+            Toast.makeText(this, "Location not available", Toast.LENGTH_LONG);
+        }
         clearGridViewAdapter();
         loadImageGridView();
 //        this.sgvResults.setOnScrollListener(new EndlessScrollListener() {
@@ -146,7 +191,29 @@ public class ImageSearchActivity extends ActionBarActivity implements ImageSearc
             }
         };
 
-        for (String eachCategory : SEARCH_CATEGORIES) {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        List<String> selectionList = new ArrayList<>(5);
+        if ("yes".equals(pref.getString("Mall", null))) {
+            selectionList.add("83029234@N00");
+        }
+        if ("yes".equals(pref.getString("Museum", null))) {
+            selectionList.add("1938854@N23");
+        }
+        if ("yes".equals(pref.getString("Park", null))) {
+            selectionList.add("72717767@N00");
+        }
+        if ("yes".equals(pref.getString("Restaurant", null))) {
+            selectionList.add("57634850@N00");
+        }
+        if ("yes".equals(pref.getString("Sight Seeing", null))) {
+            selectionList.add("626047@N23");
+        }
+
+        if (selectionList.size() == 0) {
+            selectionList.addAll(Arrays.asList(SEARCH_CATEGORIES));
+        }
+
+        for (String eachCategory : selectionList) {
             ImageSearchApiClient.searchImages(eachCategory, this.latitude, this.longitude, this.searchSettingParcelable, responseHandler);
         }
     }
@@ -185,13 +252,6 @@ public class ImageSearchActivity extends ActionBarActivity implements ImageSearc
     }
 
 
-    public void displaySettingsDialog() {
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ImageSearchSetting searchSettingFragment = ImageSearchSetting.newInstance(this.searchSettingParcelable);
-        ft.replace(R.id.settings_fragment_placeholder, searchSettingFragment);
-        ft.commit();
-    }
-
     @Override
     public void onFragmentInteraction(SearchSetting searchSetting) {
         //Set the new settings and fire the grid view image loading
@@ -199,94 +259,5 @@ public class ImageSearchActivity extends ActionBarActivity implements ImageSearc
         //Received a new setting. Clear the adapter and start over.
         clearGridViewAdapter();
         this.loadImageGridView();
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-
-    }
-
-    @Override
-    public void onConnected(Bundle bundle) {
-        // Display the connection status
-        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (location != null) {
-            this.latitude = location.getLatitude();
-            this.longitude = location.getLongitude();
-        } else {
-           // Toast.makeText(this, "Current location was null, enable GPS on emulator!", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        if (i == CAUSE_SERVICE_DISCONNECTED) {
-            Toast.makeText(this, "Disconnected. Please re-connect.", Toast.LENGTH_SHORT).show();
-        } else if (i == CAUSE_NETWORK_LOST) {
-            Toast.makeText(this, "Network lost. Please re-connect.", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        connectClient();
-    }
-
-    protected void connectClient() {
-        // Connect the client.
-        if (isGooglePlayServicesAvailable() && mGoogleApiClient != null) {
-            mGoogleApiClient.connect();
-        }
-    }
-
-    private boolean isGooglePlayServicesAvailable() {
-        // Check that Google Play services is available
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-        // If Google Play services is available
-        if (ConnectionResult.SUCCESS == resultCode) {
-            // In debug mode, log the status
-            Log.d("Location Updates", "Google Play services is available.");
-            return true;
-        } else {
-            Log.d("Location Updates", "Google Play services is NOT available.");
-
-            return false;
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        // Disconnecting the client invalidates it.
-        if (mGoogleApiClient != null) {
-            mGoogleApiClient.disconnect();
-        }
-        super.onStop();
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-/*
-         * Google Play services can resolve some errors it detects. If the error
-		 * has a resolution, try sending an Intent to start a Google Play
-		 * services activity that can resolve error.
-		 */
-        if (connectionResult.hasResolution()) {
-            try {
-                // Start an Activity that tries to resolve the error
-                connectionResult.startResolutionForResult(this,
-                        CONNECTION_FAILURE_RESOLUTION_REQUEST);
-                /*
-				 * Thrown if Google Play services canceled the original
-				 * PendingIntent
-				 */
-            } catch (IntentSender.SendIntentException e) {
-                // Log the error
-                e.printStackTrace();
-            }
-        } else {
-            Toast.makeText(getApplicationContext(),
-                    "Sorry. Location services not available to you", Toast.LENGTH_LONG).show();
-        }
     }
 }

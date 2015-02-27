@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
 
 import com.etsy.android.grid.util.DynamicHeightImageView;
 import com.squareup.picasso.Picasso;
@@ -14,6 +15,7 @@ import com.yahoo.pil.models.Photo;
 
 import java.util.List;
 import java.util.Random;
+
 
 /**
  * Created by srmurthy on 1/28/15.
@@ -37,14 +39,18 @@ public class ImageResultsAdapter extends ArrayAdapter<Photo> {
         }
         // Lookup view for data population
         DynamicHeightImageView ivImage = (DynamicHeightImageView) convertView.findViewById(R.id.ivImage);
-        //TextView tvTitle = (TextView) convertView.findViewById(R.id.tvTitle);
 
         double positionHeight = getPositionRatio(position);
 
         ivImage.setHeightRatio(positionHeight);
+        TextView tvTitle = (TextView)convertView.findViewById(R.id.tvTitle);
+        String title = imageResult.getTitle();
+        if(title != null && title.length() > 14) {
+            title = title.substring(0,14)+"...";
+        }
+        tvTitle.setText(title);
 
         Picasso.with(getContext()).load(imageResult.getSmallImageURL()).fit().into(ivImage);
-        //tvTitle.setText(Html.fromHtml(imageResult.getTitle()));
         return convertView;
     }
 
